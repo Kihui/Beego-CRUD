@@ -1,0 +1,85 @@
+\documentclass[12pt]{article}
+
+%Paquetes
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=3cm,letterpaper]{geometry}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,activeacute]{babel}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{tabularx}
+\usepackage{wasysym}
+\usepackage{listings}
+
+%\usepackage{graphicx}
+%\graphicspath { {tarea01/media/} }
+%\usepackage{pifont}
+
+%Preambulo
+\title{Tecnologías para desarrollos en internet \\ Manual CRUD: Gorilla}
+\author{Kihui-DEV}
+\date{Fecha: 18/09/16 \\ Facultad de Ciencias UNAM}
+
+\begin{document}
+\maketitle
+Agregar índice.
+\section*{Introducción}
+\section*{Instalación de GO}
+\subsection*{Descarga y configuración}
+Para obtener el paquete de Golang y descomprimirlo \\
+Ejecutar:
+\begin{verbatim}
+  $ wget https://golang.org/doc/install?download=go1.7.1.linux-amd64.tar.gz
+
+  # tar -C /usr/local -xzf go1.7.1.linux-amd64.tar.gz
+\end{verbatim}
+
+
+Agregar esta línea en el script de inicio (típicamente en \textit{/user/local/profile}
+si se desea hacer una instalación general en el sistema operativo o
+en en particular para el usuario en curso \textit{\~/.profile}):
+\begin{verbatim}
+  export PATH=$PATH:/usr/local/go/bin
+\end{verbatim}
+
+\subsection*{Prueba}
+Crear un directorio que haga de workspace para la prueba.\\
+Por ejemplo:
+\begin{verbatim}
+  $ mkdir ~/go
+\end{verbatim}
+Asignar la variable \textbf{GOPATH} para que apunte a tal dirección:
+\begin{verbatim}
+  $ export GOPATH=$HOME/go
+\end{verbatim}
+Bien podemos hacer persistente este cambio agregando la misma línea al script
+de inicio que editamos en la sección anterior (ir a Descarga y configuración). \par
+
+A continuación, creamos dentro de ese directorio  \textit{src/hola}.
+Y dentro de \textit{hola\/} un fichero nuevo de nombre \textit{hola.go}:
+\begin{verbatim}
+     package main
+
+     import "fmt"
+
+     func main() {
+         fmt.Printf("hola, mundo\n")
+     }
+\end{verbatim}
+
+Luego, desde cualquier ubicación podemos ejecutar\\
+esto:
+\begin{verbatim}
+  $ go install hola
+\end{verbatim}
+
+Esto producirá un ejecutable \textit{hola} dentro de el directorio \textit{go/bin/},
+que podemos ejecutar utilizando lo siguiente:
+\begin{verbatim}
+  $ $GOPATH/bin/hola
+\end{verbatim}
+
+Si produce la salida ``hola, mundo'', quiere decir que nuestra instalación fue exitosa.
+\end{document}
