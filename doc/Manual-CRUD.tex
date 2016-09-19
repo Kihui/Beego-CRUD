@@ -12,13 +12,14 @@
 \usepackage{tabularx}
 \usepackage{wasysym}
 \usepackage{listings}
+\usepackage{graphicx}
 
 %\usepackage{graphicx}
 %\graphicspath { {tarea01/media/} }
 %\usepackage{pifont}
 
 %Preambulo
-\title{Tecnologías para desarrollos en internet \\ Manual CRUD: Gorilla}
+\title{Tecnologías para desarrollos en internet \\ Manual CRUD: Beego}
 \author{Kihui-DEV}
 \date{Fecha: 18/09/16 \\ Facultad de Ciencias UNAM}
 
@@ -82,4 +83,52 @@ que podemos ejecutar utilizando lo siguiente:
 \end{verbatim}
 
 Si produce la salida ``hola, mundo'', quiere decir que nuestra instalación fue exitosa.
+
+\section*{Instalación de Beego}
+
+\noindent Para instalar Beego utilizamos el siguiente comando:
+\begin{verbatim}
+$ go get github.com/astaxie/beego
+\end{verbatim}
+
+\noindent Para compilar y correr nuestros proyectos necesitaremos instalar Bee también:
+\begin{verbatim}
+$ go get github.com/beego/bee
+\end{verbatim}
+
+\noindent Para crear un proyecto en Beego, necesitamos ir al directorio de nuestro $\$$GOPATH, donde escribimos el siguiente comando:
+\begin{verbatim}
+$ bee new quickstart
+\end{verbatim}
+\noindent Podremos ver que se han creado las sigueintes carpetas y archivos necesarios para nuestra aplicación:
+
+\begin{verbatim}
+quickstart
+|-- conf
+|   |__ app.conf
+|-- controllers
+|   |__ default.go
+|-- main.go
+|-- models
+|-- routers
+|   |__ router.go
+|-- static
+|   |--- css
+|   |--- img
+|   |__ js
+|-- tests
+|   |__ default_test.go
+|-- views
+    |__ index.tpl
+\end{verbatim}
+
+\noindent Finalmente para correr el nuevo proyecto que hemos creado,  hacemos lo siguiente:
+\begin{verbatim}
+$ cd quickstart
+$ bee run
+\end{verbatim}
+\noindent Y si entramos a localhost:8080 desde nuestro navegador podemos ver la siguiente página de inicio: \\
+
+\includegraphics[scale=0.25]{beego.png}
+
 \end{document}
