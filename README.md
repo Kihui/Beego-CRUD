@@ -1,4 +1,4 @@
-# Gorilla-CRUD
+# Beego-CRUD
 Repositorio para ejemplificar y documentar la implementación de un **CRUD** sobre el web toolkit Gorilla.
 
 Tecnologías para desarrollos en internet (2017-1)
