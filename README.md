@@ -1,5 +1,6 @@
 # Beego-CRUD
-Repositorio para ejemplificar y documentar la implementación de un **CRUD** sobre el web toolkit Gorilla.
+Repositorio para ejemplificar y documentar la implementación de un 
+**CRUD** sobre el framework *Beego*.
 
 Tecnologías para desarrollos en internet (2017-1)
 
