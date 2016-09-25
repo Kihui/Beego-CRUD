@@ -13,6 +13,7 @@
 \usepackage{wasysym}
 \usepackage{listings}
 \usepackage{graphicx}
+\usepackage{hyperref}
 
 %\usepackage{graphicx}
 %\graphicspath { {tarea01/media/} }
@@ -27,20 +28,43 @@
 \maketitle
 Agregar índice.
 \section*{Introducción}
-\section*{Instalación de GO}
-\subsection*{Descarga y configuración}
-Para obtener el paquete de Golang y descomprimirlo \\
+\section*{Instalación de Go 1.7}
+Paquetes de instalación para \textit{Apple OS X, Microsoft Windows y Linux} son provistos en la página oficial de descargas de \href{https://golang.org/dl/}{Go}. También viene incluido entre las opciones el código fuente del compilador del lenguaje junto con instrucciones para llegar a una instalación tan completa como las demás. \par
+A continuación, presentamos la instalación para \textit{Linux y OS X}. \footnote{Si se desea revisar la configuración para \textit{Windows}, hacer uso del siguiente enlace:
+  \href{https://golang.org/doc/install?download=go1.7.1.windows-amd64.msi}{MSI Installer}}
+
+\subsection*{Descarga}
+
+
+\subsubsection*{Linux}
+Para obtener el paquete de Golang 1.7 \\
 Ejecutar:
 \begin{verbatim}
   $ wget https://golang.org/doc/install?download=go1.7.1.linux-amd64.tar.gz
+\end{verbatim}
+O bien descargarlo directamente desde este enlace:
+\begin{center}
+\href{https://golang.org/doc/install?download=go1.7.1.linux-amd64.tar.gz}{Go 1.7 para Linux y OS X}.
+\end{center}
 
+
+\subsubsection*{Mac OS X}
+Alternativa a las siguientes instrucciones, existe la opción de descargar el fichero \textit{.pkg} instalable de \textit{Go} que automatiza la configuración para este sistema operativo.\footnote{\href{https://golang.org/doc/install?download=go1.7.1.darwin-amd64.pkg}{Instalador para Mac OS X}}\\[1mm]
+
+Para obtener una configuración inicial personalizada \textit{Mac OS X} utilice el paquete descargable para \textit{Linux} disponible en la sección anterior.\\
+
+El resto de la configuración se sigue de la misma manera para ambas plataformas.
+
+\subsection*{Configuración}
+Primero extraemos los archivos del paquete comprimido sobre algún directorio.\\
+Para descomprimir el paquete sobre \textit{/usr/local} como es usual:
+\begin{verbatim}
   # tar -C /usr/local -xzf go1.7.1.linux-amd64.tar.gz
 \end{verbatim}
-
-
-Agregar esta línea en el script de inicio (típicamente en \textit{/user/local/profile}
+Al finalizar la extracción, procedemos a establecer una ruta a los binarios de las herramientas de \textit{Go}, y así tenerlas disponibles en cada sesión.\par
+Agregar esta línea en el script de inicio (típicamente sobre \textit{/user/local/profile}
 si se desea hacer una instalación general en el sistema operativo o
-en en particular para el usuario en curso \textit{\~/.profile}):
+en particular para el usuario en curso, usar en cambio \textit{\char126/.profile}):
 \begin{verbatim}
   export PATH=$PATH:/usr/local/go/bin
 \end{verbatim}
@@ -59,7 +83,7 @@ Bien podemos hacer persistente este cambio agregando la misma línea al script
 de inicio que editamos en la sección anterior (ir a Descarga y configuración). \par
 
 A continuación, creamos dentro de ese directorio  \textit{src/hola}.
-Y dentro de \textit{hola\/} un fichero nuevo de nombre \textit{hola.go}:
+Y dentro de \textit{hola/} un fichero nuevo de nombre \textit{hola.go}:
 \begin{verbatim}
      package main
 
@@ -82,7 +106,14 @@ que podemos ejecutar utilizando lo siguiente:
   $ $GOPATH/bin/hola
 \end{verbatim}
 
-Si produce la salida ``hola, mundo'', quiere decir que nuestra instalación fue exitosa.
+o directamente sobre el directorio donde se encuentre el ejecutable:
+
+\begin{verbatim}
+  $ ./hola
+\end{verbatim}
+
+Si produce la salida ``hola, mundo'', quiere decir que nuestra instalación fue exitosa. \newpage
+
 
 \section*{Instalación de Beego}
 
