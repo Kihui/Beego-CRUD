@@ -28,6 +28,7 @@ func (c *Crea) Get() {
 }
 
 func (this *Crea) Post() {
+	this.TplName = "index.tpl"
 	o := orm.NewOrm()
 	o.Using("default")
 	
@@ -35,7 +36,7 @@ func (this *Crea) Post() {
 	if err := this.ParseForm(&u); err != nil {
 		beego.Error("Error: ", err)
 	} else {
-		manage.Data["Usuarios"] = u
+		this.Data["Usuarios"] = u
 		valid := validation.Validation{}
 		isValid, _ := valid.Valid(u)
 		if !isValid {
