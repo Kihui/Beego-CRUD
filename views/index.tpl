@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>Beego-CRUD - Crear</title>
+  <title>Beego-CRUD</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   </head>
 
@@ -17,6 +17,7 @@
           <th>Correo</th>
 	  <th>Edad</th>
 	  <th></th>
+	  <th></th>
         </tr>
       </thead>
       <tbody>
@@ -26,6 +27,7 @@
 	  <td>{{$record.Correo}}</td>
 	  <td>{{$record.Edad}}</td>
           <td><a href="/delete?id={{$record.Id}}">Eliminar</a></td>
+	  <td><a href="/update?id={{$record.Id}}">Modificar</a></td>
         </tr>
         {{end}}
       </tbody>
