@@ -12,22 +12,21 @@ type MainController struct {
 	beego.Controller
 }
 
-func (c *MainController) Get() {
-	c.Data["Website"] = "beego.me"
-	c.Data["Email"] = "astaxie@gmail.com"
+func (c *MainController) View() {
 	c.TplName = "index.tpl"
-}
-
-type Crea struct {
-	beego.Controller
-}
-
-func (c *Crea) Get() {
-	c.TplName = "crea.tpl"
 	c.Data["Form"] = &models.Usuario{}
+	o := orm.NewOrm()
+	o.Using("default")
+
+	var usuarios []*models.Usuario
+	num, err := o.QueryTable("usuario").All(&usuarios)
+
+	if err != orm.ErrNoRows && num > 0 {
+		manage.Data["records"] = usuarios
+}
 }
 
-func (this *Crea) Post() {
+func (this *MainController) Add() {
 	this.TplName = "index.tpl"
 	o := orm.NewOrm()
 	o.Using("default")
@@ -54,3 +53,4 @@ func (this *Crea) Post() {
 		}
 	}
 }
+
