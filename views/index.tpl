@@ -16,6 +16,7 @@
           <th>Nombre</th>
           <th>Correo</th>
 	  <th>Edad</th>
+	  <th></th>
         </tr>
       </thead>
       <tbody>
@@ -24,7 +25,7 @@
           <td>{{$record.Nombre}} {{$record.App}} {{$record.Apm}}</td>
 	  <td>{{$record.Correo}}</td>
 	  <td>{{$record.Edad}}</td>
-          <!--td>urlfor "ManageController.Delete" ":id" "21"</td-->	  
+          <td><a href="/delete?id={{$record.Id}}">Eliminar</a></td>
         </tr>
         {{end}}
       </tbody>

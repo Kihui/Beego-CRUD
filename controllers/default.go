@@ -52,5 +52,33 @@ func (this *MainController) Add() {
 			}
 		}
 	}
+
+	var usuarios []*models.Usuario
+	num, err := o.QueryTable("usuario").All(&usuarios)
+
+	if err != orm.ErrNoRows && num > 0 {
+		this.Data["records"] = usuarios
+	}
 }
 
+func (this *MainController) Delete() {
+	this.TplName = "delete.tpl"
+	id, err := this.GetInt("id")
+	if err != nil {
+		msg := fmt.Sprintf("Parámetro inválido: ", err)
+		beego.Debug(msg)
+	}
+
+	o := orm.NewOrm()
+	o.Using("default")
+
+	if existe := o.QueryTable("usuario").Filter("Id", id).Exist(); existe {
+		if num, err := o.Delete(&models.Usuario{Id: id}); err == nil {
+			beego.Info("Usuario eliminado. ", num)
+		} else {
+			beego.Error("Usuario no pudo ser eliminado: ", err)
+		}
+	} else {
+		beego.Info("El usuario no existe.")
+	}
+}
