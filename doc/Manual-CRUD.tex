@@ -26,14 +26,16 @@
 
 \begin{document}
 \maketitle
-Agregar índice.
+\tableofcontents{}
+\newpage
+
 \section{Introducción}
 \section{Instalación de Go 1.7}
 Paquetes de instalación para \textit{Apple OS X, Microsoft Windows y Linux} son provistos en la página oficial de descargas de \href{https://golang.org/dl/}{Go}. También viene incluido entre las opciones el código fuente del compilador del lenguaje junto con instrucciones para llegar a una instalación tan completa como las demás. \par
 A continuación, presentamos la instalación para \textit{Linux y OS X}. \footnote{Si se desea revisar la configuración para \textit{Windows}, hacer uso del siguiente enlace:
   \href{https://golang.org/doc/install?download=go1.7.1.windows-amd64.msi}{MSI Installer}}
 
-\subsection*{Descarga}
+\subsection{Descarga}\label{sec:d}
 
 
 \subsubsection*{Linux}
@@ -55,7 +57,7 @@ Para obtener una configuración inicial personalizada \textit{Mac OS X} utilice 
 
 El resto de la configuración se sigue de la misma manera para ambas plataformas.
 
-\subsection*{Configuración}
+\subsection{Configuración}\label{sec:c}
 Primero extraemos los archivos del paquete comprimido sobre algún directorio.\\
 Para descomprimir el paquete sobre \textit{/usr/local} como es usual:
 \begin{verbatim}
@@ -69,7 +71,7 @@ en particular para el usuario en curso, usar en cambio \textit{\char126/.profile
   export PATH=$PATH:/usr/local/go/bin
 \end{verbatim}
 
-\subsection*{Prueba}
+\subsection{Prueba}
 Crear un directorio que haga de workspace para la prueba.\\
 Por ejemplo:
 \begin{verbatim}
@@ -81,7 +83,7 @@ para que apunte a tal dirección:
   $ export GOPATH=$HOME/go
 \end{verbatim}
 Bien podemos hacer persistente este cambio agregando la misma línea al script
-de inicio que editamos en la sección anterior (ir a Descarga y configuración). \par
+de inicio que editamos en la sección anterior (ir a Descarga~\ref{sec:d} y configuración~\ref{sec:c}). \par
 
 A continuación, creamos dentro de ese directorio  \textit{src/hola}.
 Y dentro de \textit{hola/} un fichero nuevo de nombre \textit{hola.go}:
@@ -134,6 +136,7 @@ Para poder utilizar \textit{bee} sin necesidad de ir a la carpeta de binarios de
   # ln -s $GOPATH/bin/bee /usr/bin/bee 
 \end{verbatim}
 
+\section{Creación de proyecto}\label{sec:proy}
 \noindent Para crear un proyecto en Beego, necesitamos ir al directorio de nuestro $\$$GOPATH, donde escribimos el siguiente comando:
 \begin{verbatim}
 $ bee new beego-crud
@@ -160,13 +163,48 @@ beego-crud/
     |__ index.tpl
 \end{verbatim}
 
-\noindent Finalmente para correr el nuevo proyecto que hemos creado,  hacemos lo siguiente:
+\subsection{Estructura del proyecto}
+\begin{enumerate}[1)]
+\item \textbf{conf/}\label{jiji}
+\item \textbf{models/}
+\item \textbf{controllers/}
+\item \textbf{routers/}
+\item \textbf{views/}
+\item \textbf{static/}
+\item \textbf{tests/}
+  
+\end{enumerate}
+
+
+\subsection{Prueba del servidor local}
+\noindent Finalmente para correr el nuevo proyecto que hemos creado, hacemos lo siguiente:
 \begin{verbatim}
 $ cd $GOPATH/src/beego-crud
 $ bee run
 \end{verbatim}
-\noindent Y si ingremsamos \textit{localhost:8080} como dirección desde nuestro navegador nos encontraremos con la siguiente página de inicio: \\
+\noindent Ingresamos \textit{localhost:8080} como dirección en el navegador para encontrarnos con la siguiente página de inicio: \\
 
 \includegraphics[scale=0.25]{beego.png}
+\newpage
 
+\section{Elaboración del CRUD bajo MVC}
+En esta sección revisaremos la implementación de un CRUD (\textit{Create-Read-Update-Delete}) sobre la aplicación que creamos en la sección anterior (s.~\ref{sec:proy}). Comenzaremos explicando los documentos que tenemos que modificar para tener una configuración exitosa y la forma de escribir el código de acuerdo al MVC (\textit{Modelo Vista Controlador}), siguiendo la estructura que nos proporciona \textit{Beego} para éste.
+
+\subsection{Modelo}
+\subsubsection*{Base de datos}
+\subsubsection*{Configuración}
+Para realizar la configuración de conf/app.conf~\ref{}
+\subsubsection*{Modelos}
+
+\subsection{Controlador}
+\subsubsection*{Routers}
+\subsubsection*{Controladores}
+
+\subsection{Vista}
+\subsubsection*{Plantillas}
+\subsubsection*{Estilo y agregados}
+
+\subsection{Resultados}
+
+\section{Referencias}
 \end{document}
