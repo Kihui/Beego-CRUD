@@ -8,6 +8,8 @@
 
 <body>
 
+  <h2>Kihui-DEV</h2>
+  
   <table class="table">
       <thead>
         <tr>
@@ -22,7 +24,7 @@
           <td>{{$record.Nombre}} {{$record.App}} {{$record.Apm}}</td>
 	  <td>{{$record.Correo}}</td>
 	  <td>{{$record.Edad}}</td>
-          <!--td>{{$record.Url}} {{urlfor "ManageController.Delete" ":id" "21"}}</td-->	  
+          <!--td>urlfor "ManageController.Delete" ":id" "21"</td-->	  
         </tr>
         {{end}}
       </tbody>

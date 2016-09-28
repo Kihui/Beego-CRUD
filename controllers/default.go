@@ -22,8 +22,8 @@ func (c *MainController) View() {
 	num, err := o.QueryTable("usuario").All(&usuarios)
 
 	if err != orm.ErrNoRows && num > 0 {
-		manage.Data["records"] = usuarios
-}
+		c.Data["records"] = usuarios
+	}
 }
 
 func (this *MainController) Add() {
