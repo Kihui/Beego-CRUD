@@ -14,7 +14,6 @@
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage{hyperref}
-
 %\usepackage{graphicx}
 %\graphicspath { {tarea01/media/} }
 %\usepackage{pifont}
@@ -39,7 +38,7 @@ A continuación, presentamos la instalación para \textit{Linux y OS X}. \footno
 
 
 \subsubsection*{Linux}
-Para obtener el paquete de Golang 1.7 \\
+Para obtener el paquete de Golang\footnote{Actualmente la versión 1.7.1} \\
 Ejecutar:
 \begin{verbatim}
   $ wget https://golang.org/doc/install?download=go1.7.1.linux-amd64.tar.gz
@@ -120,12 +119,12 @@ Si produce la salida ``hola, mundo'', quiere decir que nuestra instalación fue 
 
 \section{Instalación de Beego}
 
-\noindent Para instalar Beego utilizamos el siguiente comando:
+\noindent Para instalar la última versión de Beego\footnote{A la fecha de elaboración de este manual: 1.7.1} utilizamos el siguiente comando:
 \begin{verbatim}
   $ go get github.com/astaxie/beego
 \end{verbatim}
 
-\noindent Para compilar y correr nuestros proyectos necesitaremos instalar Bee también:
+\noindent Para compilar y correr nuestros proyectos necesitaremos instalar Bee\footnote{A la fecha de elaboración de este manual: 1.5.2} también :
 \begin{verbatim}
   $ go get github.com/beego/bee
   $ go install github.com/beego/bee
@@ -163,15 +162,19 @@ beego-crud/
     |__ index.tpl
 \end{verbatim}
 
-\subsection{Estructura del proyecto}
+\subsection{Estructura del proyecto - MVC}
 \begin{enumerate}[1)]
-\item \textbf{conf/}\label{jiji}
-\item \textbf{models/}
-\item \textbf{controllers/}
-\item \textbf{routers/}
-\item \textbf{views/}
-\item \textbf{static/}
-\item \textbf{tests/}
+  \subsubsection*{Modelo}
+\item \textit{conf/}
+\item \textit{models/}
+  \subsubsection*{Vista}
+\item \textit{controllers/}
+\item \textit{routers/}
+  \subsubsection*{Controlador}
+\item \textit{views/}
+  \subsubsection*{Extra}
+\item \textit{static/}
+\item \textit{tests/}
   
 \end{enumerate}
 
@@ -190,19 +193,23 @@ $ bee run
 \section{Elaboración del CRUD bajo MVC}
 En esta sección revisaremos la implementación de un CRUD (\textit{Create-Read-Update-Delete}) sobre la aplicación que creamos en la sección anterior (s.~\ref{sec:proy}). Comenzaremos explicando los documentos que tenemos que modificar para tener una configuración exitosa y la forma de escribir el código de acuerdo al MVC (\textit{Modelo Vista Controlador}), siguiendo la estructura que nos proporciona \textit{Beego} para éste.
 
-\subsection{Modelo}
+\subsection{Preparación}
+Lo primero que hay que considerar es la conexión con la base de datos que necesitamos para nuestro modelo. Es necesario ya contar con al menos una relación en nuestro esquema de base de datos. \textit{Beego} provee una tres ``drivers'' para 
+
 \subsubsection*{Base de datos}
+
 \subsubsection*{Configuración}
 Para realizar la configuración de conf/app.conf~\ref{}
-\subsubsection*{Modelos}
 
-\subsection{Controlador}
-\subsubsection*{Routers}
-\subsubsection*{Controladores}
+\subsection{Creación}
 
-\subsection{Vista}
-\subsubsection*{Plantillas}
-\subsubsection*{Estilo y agregados}
+\subsubsection*{}
+
+\subsection{Lectura}
+
+\subsection{Actualización}
+
+\subsection{Eliminación}
 
 \subsection{Resultados}
 
