@@ -27,8 +27,8 @@
 \begin{document}
 \maketitle
 Agregar índice.
-\section*{Introducción}
-\section*{Instalación de Go 1.7}
+\section{Introducción}
+\section{Instalación de Go 1.7}
 Paquetes de instalación para \textit{Apple OS X, Microsoft Windows y Linux} son provistos en la página oficial de descargas de \href{https://golang.org/dl/}{Go}. También viene incluido entre las opciones el código fuente del compilador del lenguaje junto con instrucciones para llegar a una instalación tan completa como las demás. \par
 A continuación, presentamos la instalación para \textit{Linux y OS X}. \footnote{Si se desea revisar la configuración para \textit{Windows}, hacer uso del siguiente enlace:
   \href{https://golang.org/doc/install?download=go1.7.1.windows-amd64.msi}{MSI Installer}}
@@ -75,7 +75,8 @@ Por ejemplo:
 \begin{verbatim}
   $ mkdir ~/go
 \end{verbatim}
-Asignar la variable \textbf{GOPATH} para que apunte a tal dirección:
+Asignar la variable \textbf{GOPATH}\footnote{La misma línea puede agregarse al script de inicio \textit{profile} manejado en la sección de configuracion para evitar ejecutarla y mantener los proyectos y aplicaciones de \textit{Go} ubicados en un sólo directorio.}
+para que apunte a tal dirección:
 \begin{verbatim}
   $ export GOPATH=$HOME/go
 \end{verbatim}
@@ -115,50 +116,56 @@ o directamente sobre el directorio donde se encuentre el ejecutable:
 Si produce la salida ``hola, mundo'', quiere decir que nuestra instalación fue exitosa. \newpage
 
 
-\section*{Instalación de Beego}
+\section{Instalación de Beego}
 
 \noindent Para instalar Beego utilizamos el siguiente comando:
 \begin{verbatim}
-$ go get github.com/astaxie/beego
+  $ go get github.com/astaxie/beego
 \end{verbatim}
 
 \noindent Para compilar y correr nuestros proyectos necesitaremos instalar Bee también:
 \begin{verbatim}
-$ go get github.com/beego/bee
+  $ go get github.com/beego/bee
+  $ go install github.com/beego/bee
+\end{verbatim}
+
+Para poder utilizar \textit{bee} sin necesidad de ir a la carpeta de binarios de \textit{Go}, podemos crear un enlace simbólico que apunte precisamente al ejecutable.
+\begin{verbatim}
+  # ln -s $GOPATH/bin/bee /usr/bin/bee 
 \end{verbatim}
 
 \noindent Para crear un proyecto en Beego, necesitamos ir al directorio de nuestro $\$$GOPATH, donde escribimos el siguiente comando:
 \begin{verbatim}
-$ bee new quickstart
+$ bee new beego-crud
 \end{verbatim}
-\noindent Podremos ver que se han creado las sigueintes carpetas y archivos necesarios para nuestra aplicación:
+\noindent Podremos ver que se han creado las siguientes carpetas y archivos necesarios para nuestra aplicación:
 
 \begin{verbatim}
-quickstart
-|-- conf
+beego-crud/
+|-- conf/
 |   |__ app.conf
-|-- controllers
+|-- controllers/
 |   |__ default.go
 |-- main.go
-|-- models
-|-- routers
+|-- models/
+|-- routers/
 |   |__ router.go
-|-- static
-|   |--- css
-|   |--- img
-|   |__ js
-|-- tests
+|-- static/
+|   |--- css/
+|   |--- img/
+|   |___ js/
+|-- tests/
 |   |__ default_test.go
-|-- views
+|-- views/
     |__ index.tpl
 \end{verbatim}
 
 \noindent Finalmente para correr el nuevo proyecto que hemos creado,  hacemos lo siguiente:
 \begin{verbatim}
-$ cd quickstart
+$ cd $GOPATH/src/beego-crud
 $ bee run
 \end{verbatim}
-\noindent Y si entramos a localhost:8080 desde nuestro navegador podemos ver la siguiente página de inicio: \\
+\noindent Y si ingremsamos \textit{localhost:8080} como dirección desde nuestro navegador nos encontraremos con la siguiente página de inicio: \\
 
 \includegraphics[scale=0.25]{beego.png}
 
