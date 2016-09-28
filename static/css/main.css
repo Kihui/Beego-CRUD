@@ -1,6 +1,30 @@
+span {
+    font-size: 2em;
+}
+
+#header {
+    background: #38bd38;
+    margin: 0;
+    margin-bottom: 20px;
+    color:white;
+    padding: 10px;
+}
+
 h2 {
-    width:6em;
-    height:100%;
-    background:black;    
-    color:green;
+    margin: 0;
+    width: 49%;    
+}
+
+.beego {
+    margin-bottom: 0;
+    margin-top: 17px;
+    float: right;
+}
+
+.principal {
+    margin: 0 10px;
+}
+
+.principal2 {
+    margin: 0 50px;
 }

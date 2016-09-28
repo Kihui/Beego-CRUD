@@ -62,8 +62,7 @@ func (this *MainController) Add() {
 }
 
 func (this *MainController) Delete() {
-	this.TplName = "index.tpl"
-	
+	this.TplName = "delete.tpl"	
 	id, err := this.GetInt("id")
 	if err != nil {
 		msg := fmt.Sprintf("Parámetro inválido: ", err)
@@ -89,10 +88,7 @@ func (this *MainController) Delete() {
 	if err != orm.ErrNoRows && num > 0 {
 		this.Data["records"] = usuarios
 	}
-}
-
-func (this *MainController) GetUpdate() {
-	
+	this.Redirect("/",302)
 }
 
 func (this *MainController) Update() {
