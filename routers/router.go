@@ -6,5 +6,7 @@ import (
 )
 
 func init() {
-    beego.Router("/", &controllers.MainController{}, "get:View;post:Add")
+	beego.Router("/delete", &controllers.MainController{}, "get:Delete")
+	beego.Router("/", &controllers.MainController{}, "get:View;post:Add")
+	
 }
