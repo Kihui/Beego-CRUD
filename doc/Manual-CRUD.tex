@@ -132,7 +132,7 @@ Si produce la salida ``hola, mundo'', quiere decir que nuestra instalación fue 
 
 Para poder utilizar \textit{bee} sin necesidad de ir a la carpeta de binarios de \textit{Go}, podemos crear un enlace simbólico que apunte precisamente al ejecutable.
 \begin{verbatim}
-  # ln -s $GOPATH/bin/bee /usr/bin/bee 
+  # ln -s $GOPATH/bin/bee /usr/bin/bee
 \end{verbatim}
 
 \section{Creación de proyecto}\label{sec:proy}
@@ -175,7 +175,7 @@ beego-crud/
   \subsubsection*{Extra}
 \item \textit{static/}
 \item \textit{tests/}
-  
+
 \end{enumerate}
 
 
@@ -194,10 +194,55 @@ $ bee run
 En esta sección revisaremos la implementación de un CRUD (\textit{Create-Read-Update-Delete}) sobre la aplicación que creamos en la sección anterior (s.~\ref{sec:proy}). Comenzaremos explicando los documentos que tenemos que modificar para tener una configuración exitosa y la forma de escribir el código de acuerdo al MVC (\textit{Modelo Vista Controlador}), siguiendo la estructura que nos proporciona \textit{Beego} para éste.
 
 \subsection{Preparación}
-Lo primero que hay que considerar es la conexión con la base de datos que necesitamos para nuestro modelo. Es necesario ya contar con al menos una relación en nuestro esquema de base de datos. \textit{Beego} provee una tres ``drivers'' para 
-
+Para implementar nuestro primer CRUD en Beego es necesario tener un sistema de
+datos persistente sobre el
+que realicemos nuestras operaciones.
+La mejor solución que en casi todos los casos se señala para lograr esto en el desarrollo
+web por supuesto no son los archivos, sino una base de datos, por lo general
+relacional. \par
+Todo proyecto de Beego, como ya vimos, está organizado segun el MVC. Es precisamente
+sobre el archivo de \textbf{models.go} que escribiremos nuestras
+relaciones expresadas con atributos asignados de acuerdo a los tipos de dato
+que maneja Go para después verlos reflejados en tablas en una base datos ya explorable.
+Bien podría ser en sentido inverso, desde un esquema \textit{SQL} generar los modelos
+para nuestro proyecto de Beego, pero en nuestro caso decidimos implementarlo
+en esta dirección porque nuestra intención es enfocarnos en Beego, no en SQL.\par
+A continuación presentamos la configuración de la base de datos y un mapeo
+de una sola relación con la que trabajaremos todas las operaciones.
 \subsubsection*{Base de datos}
+\textit{Beego-ORM} es la herramienta de Mapeo Objeto-Relacional de \textit{Beego}
+escrita en \textit{Go}. Según la página oficial está inspirada en \textit{Django ORM}
+y \textit{SQLAlchemy}. Se advierte que al estar en desarrollo, no se garantiza
+un 100\% de compatibilidad y es posible encontrar algunos ``bugs'', que el
+equipo de desarrollo de Beego promete solucionar apenas se reporten.\\
 
+Lo primero que hay que considerar es la conexión con la base de datos que necesitamos para nuestro modelo.
+Beego provee soporte para tres sistemas manejadores de bases de datos
+con sus respectivos ``drivers'':
+\begin{itemize}
+\item \href{http://www.mysql.com/}{MySQL}
+\item \href{https://sqlite.org/}{Sqlite}
+\item \href{http://www.postgresql.org.es/}{Postgres}
+\end{itemize}
+
+Por su sencilla configuración y mayoría de ejemplos de implementación junto con
+Beego, escogimos MySQL por lo que los siguientes puntos se ejemplificarán
+con el supuesto de que trabajamos con este SMBD\footnote{Para revisar más ampliamente
+  las opciones de bases de datos recomendamos visitar este apartado de la documentación:
+  \href{http://beego.me/docs/mvc/model/orm.md#set-up-database}{ORM Usage}} y que ya se cuenta con una instalación
+funcional\footnote{En el manual de MySQL v5.7 viene una amplia guía de instalación.
+  Recomendamos los siguientes apartados para distintos sistemas operativos:
+  \href{http://dev.mysql.com/doc/refman/5.7/en/windows-installation.html}{Windows} |
+  \href{http://dev.mysql.com/doc/refman/5.7/en/osx-installation.html}{OS X} |
+  \href{http://dev.mysql.com/doc/refman/5.7/en/linux-installation.html}{Linux}}.\\[2mm]
+Lo primero que haremos será crear nuestra base de datos:
+\begin{verbatim}
+  $ mysql -u root -p
+  MariaDB [(none)]> create database beego;
+  MariaDB [(none)]> exit
+\end{verbatim}
+Si no experimentamos ninguna dificultad con esto, podemos continuar con la
+configuración de nuestro proyecto.
 \subsubsection*{Configuración}
 Para realizar la configuración de conf/app.conf~\ref{}
 
