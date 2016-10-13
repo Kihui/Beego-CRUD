@@ -244,7 +244,26 @@ Lo primero que haremos será crear nuestra base de datos:
 Si no experimentamos ninguna dificultad con esto, podemos continuar con la
 configuración de nuestro proyecto.
 \subsubsection*{Configuración}
-Para realizar la configuración de conf/app.conf~\ref{}
+Todo proyecto de \textit{Beego} cuenta con un archivo de configuración.
+Por defecto se interpreta el archivo \textbf{app.conf} bajo el directorio
+\textit{conf/} de la aplicación. Inicialmente, dicho archivo está escrito en formato INI,
+una estructura basica compuesta de
+secciones, propiedades y valores sobre archivos de texto plano. Por ejemplo, en ella podremos escribir
+configuraciones del estilo:
+\begin{verbatim}
+  [seccion]
+  nombre_propiedad = valor
+\end{verbatim}
+Nosotros conservaremos el nombre de la aplicación (appname), el puerto http
+(httport) y el modo de ejecución (runmode); propiedades que ya vienen incluídas
+al momento de creación de nuestra nueva aplicación. Adicionalmente
+escribiremos las siguientes propiedades:
+\begin{verbatim}
+  mysqluser = "root" ;el nombre del usuario de MySQL que es dueño de la base de datos con la que trabajaremos
+  mysqlpass = "magdario" ;la contraseña de acceso del usuario MySQL
+  mysqldb = "beego" ;el nombre de la base de datos que creamos anteriormente para el CRUD
+  mysqlurls = "127.0.0.1" ;la dirección del host de la base de datos, en nuestro caso localhost
+\end{verbatim}
 
 \subsection{Creación}
 
