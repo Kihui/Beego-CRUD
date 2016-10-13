@@ -29,6 +29,8 @@
 \newpage
 
 \section{Introducción}
+Hola
+\newpage
 \section{Instalación de Go 1.7}
 Paquetes de instalación para \textit{Apple OS X, Microsoft Windows y Linux} son provistos en la página oficial de descargas de \href{https://golang.org/dl/}{Go}. También viene incluido entre las opciones el código fuente del compilador del lenguaje junto con instrucciones para llegar a una instalación tan completa como las demás. \par
 A continuación, presentamos la instalación para \textit{Linux y OS X}. \footnote{Si se desea revisar la configuración para \textit{Windows}, hacer uso del siguiente enlace:
@@ -168,10 +170,10 @@ beego-crud/
 \item \textit{conf/}
 \item \textit{models/}
   \subsubsection*{Vista}
+\item \textit{views/}
+  \subsubsection*{Controlador}
 \item \textit{controllers/}
 \item \textit{routers/}
-  \subsubsection*{Controlador}
-\item \textit{views/}
   \subsubsection*{Extra}
 \item \textit{static/}
 \item \textit{tests/}
@@ -194,12 +196,12 @@ $ bee run
 En esta sección revisaremos la implementación de un CRUD (\textit{Create-Read-Update-Delete}) sobre la aplicación que creamos en la sección anterior (s.~\ref{sec:proy}). Comenzaremos explicando los documentos que tenemos que modificar para tener una configuración exitosa y la forma de escribir el código de acuerdo al MVC (\textit{Modelo Vista Controlador}), siguiendo la estructura que nos proporciona \textit{Beego} para éste.
 
 \subsection{Preparación}
-Para implementar nuestro primer CRUD en Beego es necesario tener un sistema de
-datos persistente sobre el
-que realicemos nuestras operaciones.
-La mejor solución que en casi todos los casos se señala para lograr esto en el desarrollo
-web por supuesto no son los archivos, sino una base de datos, por lo general
-relacional. \par
+%Para implementar nuestro primer CRUD en Beego es necesario tener un sistema de
+%datos persistente sobre el
+%que realicemos nuestras operaciones.
+%La mejor solución que en casi todos los casos se señala para lograr esto en el desarrollo
+%web por supuesto no son los archivos, sino una base de datos, por lo general
+%relacional. \par
 Todo proyecto de Beego, como ya vimos, está organizado segun el MVC. Es precisamente
 sobre el archivo de \textbf{models.go} que escribiremos nuestras
 relaciones expresadas con atributos asignados de acuerdo a los tipos de dato
@@ -229,7 +231,7 @@ Por su sencilla configuración y mayoría de ejemplos de implementación junto c
 Beego, escogimos MySQL por lo que los siguientes puntos se ejemplificarán
 con el supuesto de que trabajamos con este SMBD\footnote{Para revisar más ampliamente
   las opciones de bases de datos recomendamos visitar este apartado de la documentación:
-  \href{http://beego.me/docs/mvc/model/orm.md#set-up-database}{ORM Usage}} y que ya se cuenta con una instalación
+  \href{http://beego.me/docs/mvc/model/orm.md\#set-up-database}{ORM Usage}} y que ya se cuenta con una instalación
 funcional\footnote{En el manual de MySQL v5.7 viene una amplia guía de instalación.
   Recomendamos los siguientes apartados para distintos sistemas operativos:
   \href{http://dev.mysql.com/doc/refman/5.7/en/windows-installation.html}{Windows} |
@@ -246,36 +248,129 @@ configuración de nuestro proyecto.
 \subsubsection*{Configuración}
 Todo proyecto de \textit{Beego} cuenta con un archivo de configuración.
 Por defecto se interpreta el archivo \textbf{app.conf} bajo el directorio
-\textit{conf/} de la aplicación. Inicialmente, dicho archivo está escrito en formato INI,
-una estructura basica compuesta de
+\textit{conf/} de la aplicación. Inicialmente, dicho archivo está escrito en formato INI
+\footnote{También se permiten los siguientes formatos: XML, JSON y YAML},
+una sintáxis sencilla, compuesta de
 secciones, propiedades y valores sobre archivos de texto plano. Por ejemplo, en ella podremos escribir
 configuraciones del estilo:
 \begin{verbatim}
   [seccion]
   nombre_propiedad = valor
 \end{verbatim}
+
 Nosotros conservaremos el nombre de la aplicación (appname), el puerto http
 (httport) y el modo de ejecución (runmode); propiedades que ya vienen incluídas
 al momento de creación de nuestra nueva aplicación. Adicionalmente
-escribiremos las siguientes propiedades:
+escribiremos las siguientes propiedades:\footnote{El caracter ``;'' denota una línea de comentario. No es necesario
+  al final de cada línea. }
 \begin{verbatim}
-  mysqluser = "root" ;el nombre del usuario de MySQL que es dueño de la base de datos con la que trabajaremos
+  mysqluser = "root" ;el nombre del usuario de MySQL que es dueño de la base
   mysqlpass = "magdario" ;la contraseña de acceso del usuario MySQL
-  mysqldb = "beego" ;el nombre de la base de datos que creamos anteriormente para el CRUD
-  mysqlurls = "127.0.0.1" ;la dirección del host de la base de datos, en nuestro caso localhost
+  mysqldb = "beego" ;el nombre de la base de datos que creamos anteriormente
+  mysqlurls = "127.0.0.1" ;la dirección del host de la base de datos (localhost)
 \end{verbatim}
 
+Gracias a esta configuración la aplicación podrá establecer
+conexión con nuestra base de datos para llevar a cabo las operaciones.
+
+\subsubsection*{Modelos}
+Como ya señalamos previamente, para realizar el CRUD, nos auxiliaremos de una
+sola relación en la base de datos.
+Para registrarla, basta definir una estructura
+sobre el archivo de Go \textbf{models.go}, ubicado en la carpeta \textit{models/}
+de nuestra aplicación. Aquí mostramos un ejemplo de cómo podría ser un modelo de
+usuario\footnote{Para revisar con más detenimiento el código, pruebe visualizar
+  el archivo del proyecto en GitHub: \href{https://github.com/Kihui/Beego-CRUD/blob/master/models/models.go}{models.go}}:
+
+\begin{verbatim}
+  type Usuario struct {
+      Id          int
+      Nombre      string
+      Edad        int
+  }
+\end{verbatim}
+
+
+Para continuar con el mapeo y ver nuestro nuevo modelo reflejado en la base
+de datos que configuramos previamente,
+ahora nos dirigimos al archivo \textbf{main.go} en la raíz del proyecto y
+agregamos las siguientes configuraciones a los ``imports'' del programa:
+\begin{verbatim}
+    "github.com/astaxie/beego/orm"
+    _ "github.com/go-sql-driver/mysql"
+    models "beego-crud/models"
+\end{verbatim}
+Esto con el fin de que podamos utilizar Beego-ORM, el driver del SMBD
+y los modelos que declaremos. \\
+Luego, creamos un nuevo método método \textit{init()}, en el que escribiremos:
+\begin{verbatim}
+    func init() {
+        orm.RegisterDriver("mysql", orm.DRMySQL)
+        orm.RegisterDataBase("default", "mysql", "root:magdario@/beego?charset=utf8")
+        orm.RegisterModel(new(models.Usuario))
+        orm.RunCommand()
+    }
+\end{verbatim}
+
+Con esto, registramos tanto el driver que utilizaremos como la base de datos sobre
+la que se realizaran las operaciones de los modelos que ``demos de alta''
+en este método. Es importante señalar que si no registramos los modelos aquí o
+en su archivo correspondiente, no serán ``visibles'' para nuestra aplicación y no
+será posible efectuar cambios sobre ellos. Nosotros elegimos registrar el modelo
+de \textit{usuario}  en el método de inicialización, por la forma explícita que nos provee. \\
+
+\noindent
+Recomendamos revisar la forma resultante del archivo: \href{https://github.com/Kihui/Beego-CRUD/blob/master/main.go}{main.go} \\
+
+Finalmente, compilamos \textbf{main.go} y lo ejecutamos con los parámetros necesarios
+para realizar el mapeo y la sincronización con la base de datos.\\
+
+\noindent
+Desde \textit{\$GOPATH/beego-crud} ejecutamos:
+\begin{verbatim}
+  $ go build main.go
+  $ ./main orm syncdb
+\end{verbatim}
+
+\noindent
+Para revisar que todo marcha bien podemos pedirle al ``prompt'' de MySQL que nos
+muestre las tablas de nuestra base de datos:
+\begin{verbatim}
+  MariaDB [(none)]> use beego;
+  MariaDB [beego]> show tables;
+\end{verbatim}
+
+\noindent
+Que debe resultarnos en algo similar a:
+\begin{verbatim}
++-----------------+
+| Tables_in_beego |
++-----------------+
+| usuario         |
++-----------------+
+\end{verbatim}
+
+Si en efecto nos encontramos con las tablas correspondientes a los modelos que
+registramos, ya podemos dedicarnos a escribir el controlador y las vistas
+pertinentes para nuestro CRUD, sin preocuparnos por la conexión con la base
+de datos.
 \subsection{Creación}
-
-\subsubsection*{}
-
+\href{https://github.com/Kihui/Beego-CRUD/blob/master/controllers/default.go\#L29}{Add()}
 \subsection{Lectura}
-
+\href{https://github.com/Kihui/Beego-CRUD/blob/master/controllers/default.go\#L15}{View()}
 \subsection{Actualización}
-
+\href{https://github.com/Kihui/Beego-CRUD/blob/master/controllers/default.go\#L94}{Update()}
 \subsection{Eliminación}
+\href{https://github.com/Kihui/Beego-CRUD/blob/master/controllers/default.go\#L64}{Delete()}
 
 \subsection{Resultados}
-
+Nota: agregar screenshots de la aplicación web
 \section{Referencias}
+Nota: agregar formato!\\
+\noindent
+\url{http://beego.me/docs/intro} \\
+\url{https://golang.org/}\\
+\url{https://www.mysql.com/} \\
+\url{http://wiki.freepascal.org/Using_INI_Files} \\
+\url{http://dspace.howest.be/bitstream/10046/1323/1/anton-van-eechaute-2016-03-25.pdf}
 \end{document}
