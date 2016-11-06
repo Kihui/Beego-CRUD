@@ -17,8 +17,7 @@
 %\usepackage{graphicx}
 %\graphicspath { {tarea01/media/} }
 %\usepackage{pifont}
-\usepackage{listings}
-
+\usepackage{minted}
 %Preambulo
 \title{Tecnologías para desarrollos en internet \\ Manual CRUD: Beego}
 \author{Kihui-DEV}
@@ -182,7 +181,7 @@ beego-crud/
 \end{enumerate}
 
 
-\subsection{Prueba del servidor local}
+\subsection{Prueba del servidor local}\label{sec:pr}
 \noindent Finalmente para correr el nuevo proyecto que hemos creado, hacemos lo siguiente:
 \begin{verbatim}
 $ cd $GOPATH/src/beego-crud
@@ -283,35 +282,34 @@ de nuestra aplicación. Aquí mostramos un ejemplo de cómo podría ser un model
 usuario\footnote{Para revisar con más detenimiento el código, pruebe visualizar
   el archivo del proyecto en GitHub: \href{https://github.com/Kihui/Beego-CRUD/blob/master/models/models.go}{models.go}}:
 
-\begin{verbatim}
+\begin{minted}{go}
   type Usuario struct {
       Id          int
       Nombre      string
       Edad        int
   }
-\end{verbatim}
-
+\end{minted}
 
 Para continuar con el mapeo y ver nuestro nuevo modelo reflejado en la base
 de datos que configuramos previamente,
 ahora nos dirigimos al archivo \textbf{main.go} en la raíz del proyecto y
 agregamos las siguientes configuraciones a los ``imports'' del programa:
-\begin{verbatim}
+\begin{minted}{go}
     "github.com/astaxie/beego/orm"
     _ "github.com/go-sql-driver/mysql"
     models "beego-crud/models"
-\end{verbatim}
+\end{minted}
 Esto con el fin de que podamos utilizar Beego-ORM, el driver del SMBD
 y los modelos que declaremos. \\
 Luego, creamos un nuevo método método \textit{init()}, en el que escribiremos:
-\begin{verbatim}
+\begin{minted}{go}
     func init() {
         orm.RegisterDriver("mysql", orm.DRMySQL)
         orm.RegisterDataBase("default", "mysql", "root:magdario@/beego?charset=utf8")
         orm.RegisterModel(new(models.Usuario))
         orm.RunCommand()
     }
-\end{verbatim}
+\end{minted}
 
 Con esto, registramos tanto el driver que utilizaremos como la base de datos sobre
 la que se realizaran las operaciones de los modelos que ``demos de alta''
@@ -372,30 +370,146 @@ encontraremos la estructura del controlador principal, sus métodos serán los q
 manejen las respuestas del servidor ante las peticiones de la interfaz.
 Antes de comenzar con nuestra función de agregado o creación de usuario, importaremos
 los modelos de la aplicación que ya hemos considerado\footnote{Preparación - Modelos \ref{sec:p}},
-la herramienta \textit{ORM}, una herramienta de validación de datos y la herramienta estándar de Go
-\textit{fmt}:
-\begin{verbatim}
+la herramienta \textit{ORM} (mapeo y conexión con la base de datos), una herramienta de validación
+de datos y la herramienta estándar de Go \textit{fmt}:
+\begin{minted}{go}
     import (
       "github.com/astaxie/beego"
       models "beego-crud/models"
       "github.com/astaxie/beego/orm"
       "github.com/astaxie/beego/validation"
       "fmt"
-
     )
-\end{verbatim}
-\begin{lstlisting}[language=go]
-\end{lstlisting}
+\end{minted}
+Posteriormente, crearemos efectivamente nuestra función de agregado, que
+llamaremos \textit{Add()}. Prestemos particular atención a la estructura (recordemos
+que Go, como C, es un lenguaje estructurado) llamada MainController.
+\begin{minted}{go}
+  // Método que permite registrar un nuevo usuario
+  func (this *MainController) Add() {
+    this.TplName = "index.tpl"
+    o := orm.NewOrm()
+    o.Using("default")
+
+    // Se crea un nuevo usuario
+    u := models.Usuario{}
+    // Se guardan los datos del formulario en el nuevo usuario
+    if err := this.ParseForm(&u); err != nil {
+      // Si hay errores en el formulario
+      beego.Error("Error: ", err)
+    } else {
+      this.Data["Usuarios"] = u
+      // Se validan los datos del usuario
+      valid := validation.Validation{}
+      isValid, _ := valid.Valid(u)
+      if !isValid {
+        this.Data["Errors"] = valid.ErrorsMap
+        beego.Error("Datos inválidos")
+      } else {
+        // Se inserta el usuario nuevo en la base de datos
+        id, err := o.Insert(&u)
+        if err == nil {
+          msg := fmt.Sprintf("Nuevo usuario con id: ", id)
+          beego.Debug(msg)
+        } else {
+          msg := fmt.Sprintf("No se pudo registrar usuario: ", err)
+          beego.Debug(msg)
+        }
+      }
+    }
+
+    var usuarios []*models.Usuario
+    num, err := o.QueryTable("usuario").All(&usuarios)
+
+    if err != orm.ErrNoRows && num > 0 {
+      this.Data["records"] = usuarios
+    }
+  }
+\end{minted}
+Veamos que una de las primeras instrucciones que se dan es definir un template
+para la función de agregado del controlador, ello lo consideraremos más adelante (sección \ref{sec:unov}).
+A continuación, agregaremos una configuración en los \textit{routers} para poder
+hacer uso de nuestra nueva función.
 \subsubsection{Routers}
-En la estructura \textit{MainController} a la
-que se hace referencia \textit{init()} del archivo routers/\textbf{routers.go} que nos
-proporciona Beego por defecto en todo nuevo proyecto:
-\begin{verbatim}
-     beego.Router("/", &controllers.MainController{})
-\end{verbatim}
+Como ya hemos señalado anteriormente, el archivo de las rutas o ``urls'' de nuestra
+aplicación web, se encuentra bajo el directorio \textit{routers/} con el nombre de
+\textbf{router.go}. En él nos encontraremos con una ruta por defecto, esta es la que
+nos muestra apenas visitamos el servidor de \textit{Bee} luego de crear nuestra
+nueva aplicación (sección \ref{sec:pr}).
+\begin{minted}{go}
+  beego.Router("/", &controllers.MainController{})
+\end{minted}
 Ahora, modificaremos esa línea para que sea acorde a nuestra operación de creación.
-\subsubsection{Views}
-\href{https://github.com/Kihui/Beego-CRUD/blob/master/controllers/default.go\#L29}{Add()}
+\begin{minted}{go}
+  beego.Router("/", &controllers.MainController{}, "post:Add")
+\end{minted}
+Y listo, nuestra aplicación llamará a la función de agregado en cuanto se haga
+una petición al servidor por esa ruta.
+\subsubsection{Views}\label{sec:unov}
+Con el fin de que nuestra ruta previamente creada funcione, debemos crear un
+archivo \textit{.tpl} que corresponda con la plantilla (template) que indicamos
+en la función del controlador que llama la ruta del servidor. En este caso la ruta
+\textit{localhost:8080/}, y la función \textbf{Add()}. \\
+
+Toda plantilla debe ubicarse bajo el directorio \textit{views/} de la aplicación.
+Básicamente, consisten de un documento HTML con anotaciones propias del framework
+que hacen referencia a estructuras que maneja el controlador.
+Nosotros indicamos el template de la función de agregado como \textbf{index.tpl},
+por lo que crearemos la plantilla correspondiente con dicho nombre.
+Esta parte la dejaremos a su consideración\footnote{Es posible encontrar nuestro
+  template funcional con \textit{MaterialDesign} como framework de frontend
+  \href{https://github.com/Kihui/Beego-CRUD/blob/master/views/index.tpl}{aquí}.\\
+  Es importante recordar que la aplicación de Beego cuenta con un directorio \textit{static/}
+para manejar los estilos de los templates.},
+por la cuestión del estilo,
+sin embargo, les dejamos un ejemplo en HTML sin estilo para guiarlos en el
+proceso de elaboración:
+\begin{minted}{html}
+ <!DOCTYPE html>
+  <html>
+  <head>
+    <title>Beego-CRUD</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet">
+  </head>
+
+  <body>
+    <h4 class="beego">CRUD de Beego</h4>
+    <h4>Agregar Usuario</h4>
+    <form role="form" id="usuario" method="POST">
+      <div class="">
+        <input id="nombre" name="nombre" value="{{.Usuario.Nombre}}" type="text" />
+        <label for="nombre">Nombre</label>
+      </div>
+      <br/>
+      <div>
+        <input id="app" name="app" value="{{.Usuario.App}}" type="text" />
+        <label for="app">Apellido Paterno</label>
+      </div>
+      <br/>
+      <div class="">
+        <input id="apm" name="apm" value="{{.Usuario.Apm}}" type="text" />
+        <label for="apm">Apellido Materno</label>
+      </div>
+      <br/>
+      <div class="">
+        <input id="correo" name="correo" pattern="" value="{{.Usuario.Correo}}" type="text" />
+        <label for="correo">Correo Electrónico</label>
+      </div>
+      <br/>
+      <div class="">
+        <input id="edad" pattern="[0-9]*?" name="edad" value="{{.Usuario.Edad}}" type="text" />
+        <label for="edad">Edad</label>
+      </div>
+      <br/>
+      <input type="submit" value="Aceptar" />
+    </form>
+  </div>
+</body>
+</html>
+
+\end{minted}
 \subsection{Lectura}
 \subsubsection{Controllers}
 \subsubsection{Routers}
