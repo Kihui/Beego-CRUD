@@ -9,13 +9,17 @@ import (
 )
 
 func init() {
-    orm.RegisterDriver("mysql", orm.DRMySQL)
-    orm.RegisterDataBase("default", "mysql", "root:magdario@/beego?charset=utf8")
-    orm.RegisterModel(new(models.Usuario))
-    orm.RunCommand()
+	// Se registra el driver de la base de datos
+	orm.RegisterDriver("mysql", orm.DRMySQL)
+	// Se registra la base de dator
+	orm.RegisterDataBase("default", "mysql", "root:magdario@/beego?charset=utf8")
+	// Se registra el modelo de usuario
+	orm.RegisterModel(new(models.Usuario))
+	orm.RunCommand()
 }
 
 func main() {
+	// Se corre la aplicación
 	beego.Run()
 }
 

@@ -1,5 +1,6 @@
 package models
 
+// Definición del modelo de usuario
 type Usuario struct {
     Id		int		`form:"-"`
     Nombre      string	`form:"nombre"`
