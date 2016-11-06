@@ -17,6 +17,7 @@
 %\usepackage{graphicx}
 %\graphicspath { {tarea01/media/} }
 %\usepackage{pifont}
+\usepackage{listings}
 
 %Preambulo
 \title{Tecnologías para desarrollos en internet \\ Manual CRUD: Beego}
@@ -273,7 +274,7 @@ escribiremos las siguientes propiedades:\footnote{El caracter ``;'' denota una l
 Gracias a esta configuración la aplicación podrá establecer
 conexión con nuestra base de datos para llevar a cabo las operaciones.
 
-\subsubsection*{Modelos}
+\subsubsection*{Modelos}\label{sec:p}
 Como ya señalamos previamente, para realizar el CRUD, nos auxiliaremos de una
 sola relación en la base de datos.
 Para registrarla, basta definir una estructura
@@ -353,14 +354,62 @@ Que debe resultarnos en algo similar a:
 Si en efecto nos encontramos con las tablas correspondientes a los modelos que
 registramos, ya podemos dedicarnos a escribir el controlador y las vistas
 pertinentes para nuestro CRUD, sin preocuparnos por la conexión con la base
-de datos.
+de datos.\\
+
+A continuación presentamos las operaciones de un CRUD implementado en nuestro
+Framework Beego. Cada una viene separada con su sección correspondiente y los
+apartados que contiene se refieren a los archivos de la estructura del proyecto
+y cómo debemos modificarlos para elaborar la operación en cuestión.\\
+
 \subsection{Creación}
+Manejaremos esta operación como un registro de usuarios para alguna plataforma.
+Este registro será lo primero que tendremos en el ``index'' de la página que
+estamos desarrollando.
+\subsubsection{Controllers}
+Lo primero que debemos considerar es la función del controlador que manejara
+nuestra operación de creación. En el archivo controllers/\textbf{default.go}\footnote{Podemos cambiar este nombre de archivo si nos parece pertinente, pero por simplicidad lo dejaremos así, basta con que nuestras funciones de controlador se ubiquen en esa carpeta.}
+encontraremos la estructura del controlador principal, sus métodos serán los que
+manejen las respuestas del servidor ante las peticiones de la interfaz.
+Antes de comenzar con nuestra función de agregado o creación de usuario, importaremos
+los modelos de la aplicación que ya hemos considerado\footnote{Preparación - Modelos \ref{sec:p}},
+la herramienta \textit{ORM}, una herramienta de validación de datos y la herramienta estándar de Go
+\textit{fmt}:
+\begin{verbatim}
+    import (
+      "github.com/astaxie/beego"
+      models "beego-crud/models"
+      "github.com/astaxie/beego/orm"
+      "github.com/astaxie/beego/validation"
+      "fmt"
+
+    )
+\end{verbatim}
+\begin{lstlisting}[language=go]
+\end{lstlisting}
+\subsubsection{Routers}
+En la estructura \textit{MainController} a la
+que se hace referencia \textit{init()} del archivo routers/\textbf{routers.go} que nos
+proporciona Beego por defecto en todo nuevo proyecto:
+\begin{verbatim}
+     beego.Router("/", &controllers.MainController{})
+\end{verbatim}
+Ahora, modificaremos esa línea para que sea acorde a nuestra operación de creación.
+\subsubsection{Views}
 \href{https://github.com/Kihui/Beego-CRUD/blob/master/controllers/default.go\#L29}{Add()}
 \subsection{Lectura}
+\subsubsection{Controllers}
+\subsubsection{Routers}
+\subsubsection{Views}
 \href{https://github.com/Kihui/Beego-CRUD/blob/master/controllers/default.go\#L15}{View()}
 \subsection{Actualización}
+\subsubsection{Controllers}
+\subsubsection{Routers}
+\subsubsection{Views}
 \href{https://github.com/Kihui/Beego-CRUD/blob/master/controllers/default.go\#L94}{Update()}
 \subsection{Eliminación}
+\subsubsection{Controllers}
+\subsubsection{Routers}
+\subsubsection{Views}
 \href{https://github.com/Kihui/Beego-CRUD/blob/master/controllers/default.go\#L64}{Delete()}
 
 \subsection{Resultados}
