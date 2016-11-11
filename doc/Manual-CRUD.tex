@@ -372,6 +372,7 @@ Antes de comenzar con nuestra función de agregado o creación de usuario, impor
 los modelos de la aplicación que ya hemos considerado\footnote{Preparación - Modelos \ref{sec:p}},
 la herramienta \textit{ORM} (mapeo y conexión con la base de datos), una herramienta de validación
 de datos y la herramienta estándar de Go \textit{fmt}:
+\label{sec:imp}
 \begin{minted}{go}
     import (
       "github.com/astaxie/beego"
@@ -462,20 +463,20 @@ Esta parte la dejaremos a su consideración\footnote{Es posible encontrar nuestr
   Es importante recordar que la aplicación de Beego cuenta con un directorio \textit{static/}
 para manejar los estilos de los templates.},
 por la cuestión del estilo,
-sin embargo, les dejamos un ejemplo en HTML sin estilo para guiarlos en el
-proceso de elaboración:
+sin embargo, les dejamos un ejemplo en HTML\footnote{Nótese que el pattern del correo
+  electrónico no está definido, por lo que recomendamos dirigirse al FINAL de la siguiente
+  sección del documento para conocer las razones: \ref{regexp}}
+sin estilo para guiarlos en el proceso de elaboración:
 \begin{minted}{html}
  <!DOCTYPE html>
   <html>
   <head>
     <title>Beego-CRUD</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    rel="stylesheet">
   </head>
 
   <body>
-    <h4 class="beego">CRUD de Beego</h4>
+    <h3 class="beego">CRUD de Beego</h3>
     <h4>Agregar Usuario</h4>
     <form role="form" id="usuario" method="POST">
       <div class="">
@@ -511,21 +512,363 @@ proceso de elaboración:
 
 \end{minted}
 \subsection{Lectura}
-\subsubsection{Controllers}
-\subsubsection{Routers}
-\subsubsection{Views}
-\href{https://github.com/Kihui/Beego-CRUD/blob/master/controllers/default.go\#L15}{View()}
-\subsection{Actualización}
-\subsubsection{Controllers}
-\subsubsection{Routers}
-\subsubsection{Views}
-\href{https://github.com/Kihui/Beego-CRUD/blob/master/controllers/default.go\#L94}{Update()}
-\subsection{Eliminación}
-\subsubsection{Controllers}
-\subsubsection{Routers}
-\subsubsection{Views}
-\href{https://github.com/Kihui/Beego-CRUD/blob/master/controllers/default.go\#L64}{Delete()}
+Esta operación será implementada para la página principal de nuestro CRUD,
+junto con la operación de creación. Esto con el fin de que sea observable
+que ambas operaciones funcionan sin necesidad de hacer consultas en la base de
+datos. Como tal, el usuario no tendrá interacción con esta operación, eventualmente
+será ``modificable'', o mejor dicho observable (en los cambios) con las
+operaciones restantes.\\
 
+A continuación, se presenta la misma lógica para la operación
+de creación previa.
+\subsubsection{Controllers}
+Para este punto suponemos que ya se han expresado las importaciones (\ref{sec:imp})
+necesarias en el archivo de \textit{default.go} que tiene nuestro controlador
+principal. Continuaremos con la elaboración del método que manejará la lectura
+o consulta de los usuarios en la base de datos que llamaremos \textbf{View()}:
+
+\begin{minted}{go}
+  // Método que muestra todos los usuarios
+  func (c *MainController) View() {
+    // Nombre del template
+    c.TplName = "index.tpl"
+    // Se le asigna un modelo al formulario de la vista
+    c.Data["Form"] = &models.Usuario{}
+    // Se crea una conexión a la base
+    o := orm.NewOrm()
+    // Se indica que se usará la base por default
+    o.Using("default")
+
+    // Arreglo donde se guardarán los usuarios
+    var usuarios []*models.Usuario
+    // Se guardan los usuarios de la base en el arreglo
+    num, err := o.QueryTable("usuario").All(&usuarios)
+
+    if err != orm.ErrNoRows && num > 0 {
+      // Se pasa el arreglo al contexto de la vista
+      c.Data["records"] = usuarios
+    }
+  }
+\end{minted}
+Como se había mencionado, la funcionalidad de este método será observable desde la página
+principal, es por eso que asignamos el mismo template que para la operación de creación
+anterior. Es importante que tengamos presente el nombre de nuestra función, pues la
+utilizaremos en el siguiente apartado. 
+\subsubsection{Routers}
+Con el fin de hacer disponible nuestra función, es debido incluirla en alguna de las
+rutas de la aplicación. Modificando el archivo \textbf{routers.go} podemos asignar una
+función a una o más rutas. Dado que esperamos que nuestra operación de lectura esté disponible
+desde la página principal al igual que nuestra operación de creación, simplemente modificaremos
+la línea que habíamos agregado previamente para incluír nuestra nueva operación de lectura.
+Por tanto, de tener está línea:
+\begin{verbatim}
+  beego.Router("/", &controllers.MainController{}, "post:Add")
+\end{verbatim}
+
+\noindent Agregaremos la función \textbf{View()} de la siguiente manera:
+\begin{minted}{go}
+  beego.Router("/", &controllers.MainController{}, "get:View;post:Add")
+\end{minted}
+Finalmente, para poder probar nuestra nueva configuración será necesario editar el template de la página principal.
+\subsubsection{Views}
+El template que elegimos para la función de lectura, referente al archivo \textbf{index.tpl}
+del directorio de vistas de la aplicación, ya debe existir si hemos implementado la operación
+de creación del CRUD previamente. Simplemente agregaremos un contenedor pertinente para mostrar
+la información del modelo que nos devuelve nuestra función recién realizada:
+\begin{minted}{html}
+    <div>
+    <h4>Usuarios</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Edad</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range $record := .records}}
+        <tr>
+          <td>{{$record.Nombre}} {{$record.App}} {{$record.Apm}}</td>
+          <td>{{$record.Correo}}</td>
+          <td>{{$record.Edad}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+\end{minted}
+Con estos cambios será posible visualizar los nuevos usuarios apenas los agreguemos sin necesidad
+de cambiar de página. Todo desde la ruta principal de la aplicación \textit{localhost:8080/}.
+\subsection{Actualización}
+Supondremos que ya se ha implementado la operación de lectura como se describe en este documento
+y que ya contamos con registros existentes de usuarios en la base de datos.
+Continuaremos con la descripción de los pasos en la lógica de la aplicación; los mismos
+seguidos en el desarrollo de las demás operaciones del CRUD.
+\subsubsection{Controllers}
+Como ya deben sospechar, luego de haber repetido los pasos dos veces con las operaciones anteriores,
+lo primero será escribir una función en el archivo de controlador principal \textbf{routers.go}.
+Por motivos de simplicidad, el nombre ideal nos parece ser \textbf{Update()}, pero es preciso
+repetir que el nombre no afectará su funcionamiento, siempre que lo respetemos para las implementaciones
+de los apartados siguientes. De lo contrario, podríamos confundir un simple error de referencia con uno
+inmerso en la lógica de nuestra aplicación.
+A continuación nuestra propuesta de código para el método de actualización:
+\begin{minted}{go}
+  // Método que permite modificar los datos de un usuario
+  func (this *MainController) Update() {
+    this.TplName = "update.tpl"
+    this.Data["Form"] = &models.Usuario{}
+    o := orm.NewOrm()
+    o.Using("default")
+
+    // Se obtiene el parámetro id del url
+    if id, err := this.GetInt("id"); err == nil {
+      // Se obtiene el usuario con el id del parámetro
+      u := models.Usuario{Id: id}
+      if o.Read(&u) != nil {
+        beego.Error("El usuario no existe")
+      } else {
+        // Se pasan los datos del usuario al contexto de la vista
+        this.Data["Nom"] = u.Nombre
+        this.Data["App"] = u.App
+        this.Data["Apm"] = u.Apm
+        this.Data["Correo"] = u.Correo
+        this.Data["Edad"] = u.Edad
+      }
+      // Si se efectúa el método POST en la vista
+      if this.Ctx.Input.Method() == "POST" {
+        // Se guardan los datos del formulario en el usuario
+        if err := this.ParseForm(&u); err != nil {
+          beego.Error("Error: ", err)
+        } else {
+          this.Data["Usuarios"] = u
+          valid := validation.Validation{}
+          isValid, _ := valid.Valid(u)
+          if !isValid {
+            this.Data["Errors"] = valid.ErrorsMap
+            beego.Error("Datos inválidos")
+          } else {
+            // Se actualiza el usuario con los nuevos datos en la base
+            id, err := o.Update(&u)
+            if err == nil {
+              msg := fmt.Sprintf("Usuario actualizado: ", id)
+              beego.Debug(msg)
+            } else {
+              msg := fmt.Sprintf("No se pudo actulizar usuario: ", err)
+              beego.Debug(msg)
+            }
+          }
+        }			
+        this.Redirect("/", 302)
+        return
+      }
+    } else {
+      beego.Error("Parámetro inválido: ", err)
+    }		
+  }
+  
+\end{minted}
+Con este método listo, podemos proceder a configurarlo en las rutas de la aplicación y dejarlo
+disponible.
+A propósito de hacer más explícita la contraparte visual que le corresponde, hemos asignado el template de
+esta función con el mismo nombre: \textbf{update.tpl}; archivo que deberá existir en el directorio de
+vistas de la aplicación.
+\subsubsection{Routers}
+Anteriormente agregamos y, posteriormente modificamos, una sola ruta de la aplicación en la función
+\textbf{init()} de nuestro archivo de configuración de rutas \textbf{router.go}.
+Justo debajo (o arriba) de la línea que define la ruta principal de la aplicación, colocaremos
+una que corresponda a la función de actualización recién presentada.
+\begin{minted}{go}
+  beego.Router("/update", &controllers.MainController{}, "*:Update")  
+\end{minted}
+Apreciemos que difiere en argumentos con la línea de la ruta principal. El primero nos indica que esta
+funcionalidad es accesible desde \textit{localhost:8080/update}, sin embargo, para que el usuario
+pueda hacer uso de la función adecuadamente no es conveniente que acceda de forma ``manual'' a dicha ruta de a aplicación,
+pues necesitamos información de entrada, el usuario que será modificado -en nuestro caso, el id de dicho
+elemento. 
+\subsubsection{Views}
+Con la intención de resolver la situación planteada al final del apartado anterior,
+alteraremos un poco la vista principal de la aplicación para hacer posible la
+modificación de usuarios existentes en la base de datos.
+Añadiremos una línea en la vista principal \textbf{index.tpl} (dentro de la definición de
+la tabla).
+\begin{verbatim}
+  <tr>
+    <td>{{$record.Nombre}} {{$record.App}} {{$record.Apm}}</td>
+    <td>{{$record.Correo}}</td>
+    <td>{{$record.Edad}}</td>
+  </tr>
+\end{verbatim}
+Resultando en lo siguiente:
+\begin{minted}{html}
+  <tr>
+    <td>{{$record.Nombre}} {{$record.App}} {{$record.Apm}}</td>
+    <td>{{$record.Correo}}</td>
+    <td>{{$record.Edad}}</td>
+    <td><a href="/update?id={{$record.Id}}"><i>editar</i></a></td>
+  </tr>
+\end{minted}
+Posteriormente, ya que hemos hecho accesible la ruta de la operación de actualización
+con el parámetro necesario para la función del controlador que le corresponde, 
+obligatoriamente debemos incluir el template que exige en el directorio de vistas.\\
+\textit{views/}\textbf{update.tpl}:
+\begin{minted}{html}
+  <!DOCTYPE html>
+   <html>
+   <head>
+    <title>Beego-CRUD</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+   </head>
+
+   <body>
+    <div>
+      <h3 class="beego">CRUD de Beego</h3>
+      <h4>Actualizar Usuario</h4>
+      <form role="form" id="usuario" method="POST">
+       <div>
+         <input id="nombre" name="nombre" value="{{.Nom}}" type="text" />
+         <label for="nombre">Nombre</label>
+       </div>
+       <br/>
+       <div>
+         <input id="app" name="app" value="{{.App}}" type="text" />
+         <label for="app">Apellido Paterno</label>
+       </div>
+       <br/>
+       <div>
+         <input id="apm" name="apm" value="{{.Apm}}" type="text" />
+         <label for="apm">Apellido Materno</label>
+       </div>
+       <br/>
+       <div>
+         <input id="correo"  name="correo" pattern="" value="{{.Correo}}" type="text" />
+         <label for="correo">Correo Electrónico</label>
+       </div>
+       <br/>
+       <div>
+         <input id="edad" pattern="[0-9]*?" name="edad" value="{{.Edad}}" type="text" />
+         <label for="edad">Edad</label>
+       </div>
+       <br/>
+       <input type="submit" value="Aceptar" /> 
+      </form>
+    </div>
+  </body>
+ </html>  
+\end{minted}
+\label{regexp}
+No pasemos por alto que el patrón del correo debe ser llenado con una expresión regular.
+Por limitantes en el ancho de página, no pudimos agregar nuestro original al HTML
+que presentamos. Pero he aquí el que nosotros utilizamos:
+\begin{verbatim}
+[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$
+\end{verbatim}
+\subsection{Eliminación}
+Para terminar con la implementación de nuestro CRUD en Beego, implementaremos
+la eliminación de usuarios. De manera similar a la operación de actualización
+anterior, estará disponible la función de eliminación en el listado de lectura
+de usuarios de la página principal. A un lado de la edición de un usuario en la
+tabla, tendremos la opción de eliminarlos.
+\subsubsection{Controllers}
+Dentro del archivo del controlador principal \textit{controllers/}\textbf{default.go}
+crearemos una nueva función de eliminación para la estructura que ahí reside.
+Le llamaremos de forma convencional con el nombre \textbf{Delete()}.
+Aquí su implementación:
+\begin{minted}{go}
+  // Método que permite eliminar un usuario
+  func (this *MainController) Delete() {
+    this.TplName = "delete.tpl"
+    // Se obtiene el parámetro id del url
+    id, err := this.GetInt("id")
+    if err != nil {
+      msg := fmt.Sprintf("Parámetro inválido: ", err)
+      beego.Debug(msg)
+    }
+
+    o := orm.NewOrm()
+    o.Using("default")
+
+    // Se obtiene el usuario con el id del parámetro
+    if existe := o.QueryTable("usuario").Filter("Id", id).Exist(); existe {
+      // Se elimina el usuario de la base de datos
+      if num, err := o.Delete(&models.Usuario{Id: id}); err == nil {
+        beego.Info("Usuario eliminado. ", num)
+      } else {
+        beego.Error("Usuario no pudo ser eliminado: ", err)
+      }
+    } else {
+      beego.Info("El usuario no existe.")
+    }
+    
+    var usuarios []*models.Usuario
+    num, err := o.QueryTable("usuario").All(&usuarios)
+
+    if err != orm.ErrNoRows && num > 0 {
+      this.Data["records"] = usuarios
+    }
+    this.Redirect("/",302)
+  }  
+\end{minted}
+Una vez hecho esto podemos configurar su uso a partir de una ruta de la aplicación.
+\subsubsection{Routers}
+Con la finalidad de que la función sea usable, es preciso definir una ruta o utilizar
+alguna que ya hayamos definido. Nosotros agregaremos la siguiente línea al archivo
+\textit{routers/}\textbf{router.go}, para que
+la operación de eliminación a utilizar por cualquier usuario de la aplicación tenga
+efecto con la función correspondiente.
+\begin{minted}{go}
+  beego.Router("/delete", &controllers.MainController{}, "*:Delete")	  
+\end{minted}
+Luego procedemos a hacer accesible dicha ruta para el usuario desde la interfaz visual
+de la aplicación.
+\subsubsection{Views}
+Simulando un menú de opciones para cada entrada en la tabla de lectura de la base
+de datos de la página principal, luego de tener la posibilidad de editar cualquier
+usuario, agregaremos la alternativa de eliminarlo permanentemente.
+Si hicimos las modificaciones en \textbf{index.tpl} como se indica en el apartado de
+vistas de la operación de actualización, deberíamos contar con algo similar a esto
+dentro de las definiciones de la tabla de registros:
+\begin{verbatim}
+  <tr>
+    <td>{{$record.Nombre}} {{$record.App}} {{$record.Apm}}</td>
+    <td>{{$record.Correo}}</td>
+    <td>{{$record.Edad}}</td>
+    <td><a href="/update?id={{$record.Id}}"><i>editar</i></a></td>
+  </tr>
+\end{verbatim}
+Sección sobre la que efectuaremos un agregado de línea como sigue:
+\begin{minted}{html}
+  <tr>
+   <td>{{$record.Nombre}} {{$record.App}} {{$record.Apm}}</td>
+   <td>{{$record.Correo}}</td>
+   <td>{{$record.Edad}}</td>
+   <td><a href="/update?id={{$record.Id}}"><i>editar</i></a></td>
+   <td><a href="/delete?id={{$record.Id}}"><i>borrar</i></a></td>
+  </tr>
+\end{minted}
+Por si el redireccionado de la página no surte efecto, es necesario que
+exista el template que asignamos a la función de eliminación.
+Podemos elaborar una plantilla sencilla que notifique del éxito en la
+eliminación del usuario.\footnote{Cabe mencionar que bajo condiciones
+  normales no debería ser una página resultante en la navegación a no ser
+  que accedamos directamente a esta ruta.}
+\begin{minted}{html}
+  <!DOCTYPE html>
+   <html>
+     <head>
+      <title>Beego-CRUD - Crear</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+     </head>
+     <body>
+       <h2>Usuario eliminado</h2>
+       <a href="/">Regresar</a>
+     </body>
+   </html>
+\end{minted}
+Con esta operación finaliza la implementación del CRUD en Beego.
+A continuación los resultados esperados.
 \subsection{Resultados}
 Nota: agregar screenshots de la aplicación web
 \section{Referencias}
