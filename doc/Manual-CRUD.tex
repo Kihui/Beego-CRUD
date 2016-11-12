@@ -15,7 +15,7 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 %\usepackage{graphicx}
-%\graphicspath { {tarea01/media/} }
+\graphicspath { {media/} }
 %\usepackage{pifont}
 \usepackage{minted}
 %Preambulo
@@ -29,7 +29,14 @@
 \newpage
 
 \section{Introducción}
-Hola
+Hola... Admitimos que esta sección necesita un par o más de párrafos descriptivos -que eventualmente
+escribiremos a consciencia- pero queremos ahorrarles un poco de la lectura a la que los sometemos
+en las secciones siguientes. \\
+Si en algún punto surgen dudas sobre la implementación, creemos importante poner a su disposición la versión
+más actual de nuestro CRUD  de nuestro
+repositorio público de \href{https://github.com/Kihui/Beego-CRUD}{\textit{GitHub}}.
+Esperamos que lo encuentren aclaratorio y de no ser suficiente pueden comunicarse con cualquiera de los
+miembros del equipo de Kihui-DEV (encontrarán nuestros contactos en el repositorio). 
 \newpage
 \section{Instalación de Go 1.7}
 Paquetes de instalación para \textit{Apple OS X, Microsoft Windows y Linux} son provistos en la página oficial de descargas de \href{https://golang.org/dl/}{Go}. También viene incluido entre las opciones el código fuente del compilador del lenguaje junto con instrucciones para llegar a una instalación tan completa como las demás. \par
@@ -468,49 +475,50 @@ sin embargo, les dejamos un ejemplo en HTML\footnote{Nótese que el pattern del 
   sección del documento para conocer las razones: \ref{regexp}}
 sin estilo para guiarlos en el proceso de elaboración:
 \begin{minted}{html}
- <!DOCTYPE html>
-  <html>
-  <head>
-    <title>Beego-CRUD</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  </head>
-
-  <body>
-    <h3 class="beego">CRUD de Beego</h3>
-    <h4>Agregar Usuario</h4>
-    <form role="form" id="usuario" method="POST">
-      <div class="">
-        <input id="nombre" name="nombre" value="{{.Usuario.Nombre}}" type="text" />
-        <label for="nombre">Nombre</label>
-      </div>
-      <br/>
-      <div>
-        <input id="app" name="app" value="{{.Usuario.App}}" type="text" />
-        <label for="app">Apellido Paterno</label>
-      </div>
-      <br/>
-      <div class="">
-        <input id="apm" name="apm" value="{{.Usuario.Apm}}" type="text" />
-        <label for="apm">Apellido Materno</label>
-      </div>
-      <br/>
-      <div class="">
-        <input id="correo" name="correo" pattern="" value="{{.Usuario.Correo}}" type="text" />
-        <label for="correo">Correo Electrónico</label>
-      </div>
-      <br/>
-      <div class="">
-        <input id="edad" pattern="[0-9]*?" name="edad" value="{{.Usuario.Edad}}" type="text" />
-        <label for="edad">Edad</label>
-      </div>
-      <br/>
-      <input type="submit" value="Aceptar" />
+  <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Beego-CRUD</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    </head>
+    <body>
+     <div>
+       <h3 class="beego">CRUD de Beego</h3>
+       <h4>Agregar Usuario</h4>
+       <form role="form" id="usuario" method="POST">
+       <div class="">
+       <input id="nombre" name="nombre" value="{{.Usuario.Nombre}}" type="text" />
+       <label for="nombre">Nombre</label>
+     </div>
+     <br/>
+     <div>
+       <input id="app" name="app" value="{{.Usuario.App}}" type="text" />
+       <label for="app">Apellido Paterno</label>
+     </div>
+     <br/>
+     <div class="">
+       <input id="apm" name="apm" value="{{.Usuario.Apm}}" type="text" />
+       <label for="apm">Apellido Materno</label>
+     </div>
+     <br/>
+     <div class="">
+       <input id="correo" name="correo" pattern="" value="{{.Usuario.Correo}}" />
+       <label for="correo">Correo Electrónico</label>
+     </div>
+     <br/>
+     <div class="">
+       <input id="edad" pattern="[0-9]*?" name="edad" value="{{.Usuario.Edad}}" />
+       <label for="edad">Edad</label>
+     </div>
+     <br/>
+     <input type="submit" value="Aceptar" />
     </form>
-  </div>
-</body>
-</html>
-
+   </div>
+  </body>
+ </html>    
 \end{minted}
+Para ilustrar el posible resultado de esta operación, recomendamos dirigirse a la sección de Resultados que le corresponde
+(\ref{sec:add}).
 \subsection{Lectura}
 Esta operación será implementada para la página principal de nuestro CRUD,
 junto con la operación de creación. Esto con el fin de que sea observable
@@ -602,6 +610,8 @@ la información del modelo que nos devuelve nuestra función recién realizada:
 \end{minted}
 Con estos cambios será posible visualizar los nuevos usuarios apenas los agreguemos sin necesidad
 de cambiar de página. Todo desde la ruta principal de la aplicación \textit{localhost:8080/}.
+En la sección de Resultados se encuentra una imagen de la vista resultante de esta
+implementación (\ref{sec:read}).
 \subsection{Actualización}
 Supondremos que ya se ha implementado la operación de lectura como se describe en este documento
 y que ya contamos con registros existentes de usuarios en la base de datos.
@@ -758,6 +768,8 @@ obligatoriamente debemos incluir el template que exige en el directorio de vista
   </body>
  </html>  
 \end{minted}
+Para revisar que todo marche bien, invitamos al programador a revisar las vistas resultantes que
+deben obtener luego de escribir esta operación (\ref{sec:edit}).
 \label{regexp}
 No pasemos por alto que el patrón del correo debe ser llenado con una expresión regular.
 Por limitantes en el ancho de página, no pudimos agregar nuestro original al HTML
@@ -870,9 +882,35 @@ eliminación del usuario.\footnote{Cabe mencionar que bajo condiciones
 Con esta operación finaliza la implementación del CRUD en Beego.
 A continuación los resultados esperados.
 \subsection{Resultados}
-Nota: agregar screenshots de la aplicación web
+\subsubsection{Creación}\label{sec:add}
+\begin{figure}[H]
+  \includegraphics[width=1\textwidth]{index}
+  \caption{Vista de registro sin estilos.}
+\end{figure}
+\subsubsection{Lectura}\label{sec:read}
+\begin{figure}[H]
+  \includegraphics[width=1\textwidth]{read}
+  \caption{Vista de registro y listado de usuarios sin estilos.}
+\end{figure}
+\subsubsection{Actualización}\label{sec:edit}
+\begin{figure}[H]
+  \includegraphics[width=1\textwidth]{edit1}
+  \includegraphics[width=1\textwidth]{edit2}
+  \caption{Vistas de actualización sin estilos.}
+\end{figure}
+\subsubsection{Eliminación}\label{sec:delete}
+\begin{figure}[H]
+  \includegraphics[width=1\textwidth]{delete}
+  \includegraphics[width=1\textwidth]{delete2}
+  \caption{Vistas de eliminación sin estilos.}
+\end{figure}
+\subsubsection{Estilo}
+\begin{figure}[H]
+  \includegraphics[width=1\textwidth]{1}
+  \includegraphics[width=1\textwidth]{2}
+  \caption{Vistas finales con MDL.}
+\end{figure}
 \section{Referencias}
-Nota: agregar formato!\\
 \noindent
 \url{http://beego.me/docs/intro} \\
 \url{https://golang.org/}\\
